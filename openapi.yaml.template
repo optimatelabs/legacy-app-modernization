@@ -1,0 +1,207 @@
+swagger: "2.0"
+basePath: /
+info:
+  title: API demo with different backends
+  version: 1.0.0
+  description: API for managing users and cities
+
+paths:
+  /users:
+    get:
+      summary: Get all users
+      operationId: "getUsers"
+      x-google-backend:
+        address: PHP_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      produces:
+        - application/json
+    post:
+      summary: Create a new user
+      operationId: "createUser"
+      x-google-backend:
+        address: PHP_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - in: body
+          name: name
+          description: User name
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: email
+          description: User email
+          required: true
+          schema:
+            type: string
+      consumes:
+        - application/json
+      responses:
+        '201':
+          description: User created
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: Bad request (e.g., missing name or email)
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      operationId: "getSingleUser"
+      x-google-backend:
+        address: PHP_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - name: id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user to retrieve
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Update a user
+      operationId: "updateUser"
+      x-google-backend:
+        address: PHP_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - name: id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user to update
+        - in: body
+          name: name
+          description: User name
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: email
+          description: User email
+          required: true
+          schema:
+            type: string
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      responses:
+        '200':
+          description: User updated
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: Bad request (e.g., missing user ID)
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a user
+      operationId: "deleteUser"
+      x-google-backend:
+        address: PHP_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - name: id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user to delete
+      responses:
+        '204':
+          description: User deleted (No content)
+        '400':
+          description: Bad request (e.g., missing user ID)
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+  /cities:
+    get:
+      summary: Returns a list of cities
+      operationId: "getCities"
+      x-google-backend:
+        address: GO_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/City'
+  /cities/{id}:
+    get:
+      summary: Get a city by ID
+      operationId: "getCity"
+      x-google-backend:
+        address: GO_BACKEND_URL
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - name: id
+          type: integer
+          in: path
+          required: true
+          description: ID of the city to retrieve
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/City'
+        404:
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+    User:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        country:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
