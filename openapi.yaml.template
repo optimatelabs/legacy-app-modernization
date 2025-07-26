@@ -3,7 +3,7 @@ basePath: /
 info:
   title: API demo with different backends
   version: 1.0.0
-  description: API for managing users and cities
+  description: API for managing users and courses
 
 paths:
   /users:
@@ -140,10 +140,10 @@ paths:
           description: User not found
           schema:
             $ref: '#/definitions/Error'
-  /cities:
+  /courses:
     get:
-      summary: Returns a list of cities
-      operationId: "getCities"
+      summary: Returns a list of courses
+      operationId: "getCourses"
       x-google-backend:
         address: GO_BACKEND_URL
         path_translation: APPEND_PATH_TO_ADDRESS
@@ -155,11 +155,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/City'
-  /cities/{id}:
+              $ref: '#/definitions/Course'
+  /courses/{id}:
     get:
-      summary: Get a city by ID
-      operationId: "getCity"
+      summary: Get a course by ID
+      operationId: "getCourse"
       x-google-backend:
         address: GO_BACKEND_URL
         path_translation: APPEND_PATH_TO_ADDRESS
@@ -168,12 +168,12 @@ paths:
           type: integer
           in: path
           required: true
-          description: ID of the city to retrieve
+          description: ID of the course to retrieve
       responses:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/City'
+            $ref: '#/definitions/Course'
         404:
           description: User not found
           schema:
@@ -191,14 +191,14 @@ definitions:
           type: string
         email:
           type: string
-    City:
+    Course:
       type: object
       properties:
         id:
           type: integer
-        name:
+        title:
           type: string
-        country:
+        instructor:
           type: string
     Error:
       type: object

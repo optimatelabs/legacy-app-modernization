@@ -6,44 +6,43 @@ import (
 	"strconv"
 )
 
-// City represents a city with a name and country.
-type City struct {
-	Name    string `json:"name"`
-	Country string `json:"country"`
+// Course represents an e-learning course with a title and instructor.
+type Course struct {
+	Title      string `json:"title"`
+	Instructor string `json:"instructor"`
 }
 
-// citiesData simulates a database of cities.
-var citiesData = map[int]City{
-	1: {Name: "New York", Country: "USA"},
-	2: {Name: "London", Country: "UK"},
-	3: {Name: "Paris", Country: "France"},
-	4: {Name: "Tokyo", Country: "Japan"},
-	5: {Name: "Sydney", Country: "Australia"},
+// coursesData simulates a database of e-learning courses.
+var coursesData = map[int]Course{
+	1: {Title: "Go Programming Masterclass", Instructor: "John Doe"},
+	2: {Title: "React - The Complete Guide", Instructor: "Jane Smith"},
+	3: {Title: "Python for Data Science", Instructor: "Peter Jones"},
+	4: {Title: "Machine Learning A-Z", Instructor: "Alice Brown"},
 }
 
-// getCitiesHandler returns a list of cities.
-func getCitiesHandler(w http.ResponseWriter, r *http.Request) {
+// getCoursesHandler returns a list of courses.
+func getCoursesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(citiesData)
+	json.NewEncoder(w).Encode(coursesData)
 }
 
-func getCityHandler(w http.ResponseWriter, r *http.Request) {
+func getCourseHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	city, ok := citiesData[id]
+	course, ok := coursesData[id]
 	if !ok {
-		http.Error(w, "City not found", http.StatusNotFound)
+		http.Error(w, "Course not found", http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(city)
+	json.NewEncoder(w).Encode(course)
 }
 
 func main() {
-	http.HandleFunc("/cities", getCitiesHandler)
-	http.HandleFunc("/cities/{id}", getCityHandler)
+	http.HandleFunc("/courses", getCoursesHandler)
+	http.HandleFunc("/courses/{id}", getCourseHandler)
 	http.ListenAndServe(":8080", nil)
 }
